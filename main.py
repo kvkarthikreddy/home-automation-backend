@@ -2,10 +2,11 @@ from flask import *
 import psycopg2
 
 app = Flask(__name__)
+from flask_cors import CORS
 
-conn = psycopg2.connect("POSTGRES_URL")
+conn = psycopg2.connect("postgres://kjtxgayq:urkFQwxMUks3YpOmCXlsBmHj0Y-eob-_@peanut.db.elephantsql.com/kjtxgayq")
 
-
+CORS(app)
 
 @app.route("/create-device", methods=["POST"])
 def createDevice():
@@ -38,7 +39,7 @@ def createDevice():
         conn.commit()
 
 
-        return make_response(f"Device with deviceId {generated_device_id} successfully created", 201)
+        return make_response(f"Device with deviceId {generated_device_id} successfully created", 200)
     except Exception as e:
         return make_response(str(e), 500)
 @app.route("/toggle-switch", methods=["POST"])
@@ -90,12 +91,13 @@ def getDevices():
         cur = conn.cursor()
 
         # Execute a query to retrieve all devices and their data
-        sql = "SELECT deviceType, deviceName, pinNo, deviceId::text, isDeviceOn::boolean FROM IOT"
+        sql = "SELECT deviceType, deviceName, pinNo, deviceId::text, isDeviceOn::Boolean FROM IOT ORDER BY deviceId"
         cur.execute(sql)
 
         # Fetch all rows as a list of dictionaries
         devices_data = []
-        columns = [desc[0] for desc in cur.description]
+        columns = ["deviceType", "deviceName", "pinNo", "deviceId", "isDeviceOn"]
+        # columns = [desc[0] for desc in cur.description]
         for row in cur.fetchall():
             device = dict(zip(columns, row))
             devices_data.append(device)
