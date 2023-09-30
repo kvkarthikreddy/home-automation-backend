@@ -3,13 +3,9 @@ import psycopg2
 
 app = Flask(__name__)
 
-conn = psycopg2.connect("postgres://kjtxgayq:urkFQwxMUks3YpOmCXlsBmHj0Y-eob-_@peanut.db.elephantsql.com/kjtxgayq")
+conn = psycopg2.connect("POSTGRES_URL")
 
-data={
-    "switch 1": True,
-    "switch 2": False,
-    "switches": [1,2]
-}
+
 
 @app.route("/create-device", methods=["POST"])
 def createDevice():
