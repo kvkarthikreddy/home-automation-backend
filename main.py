@@ -108,7 +108,23 @@ def getDevices():
         return jsonify(devices_data)
     except Exception as e:
         # Handle errors here, such as logging or sending an error message
-        pass
+        return jsonify({"error": str(e)}), 500
+@app.route("/delete-device", methods=["DELETE"])
+def delete_device():
+    data = request.json
+    device_id = data.get("deviceId")
+
+    if not device_id:
+        return jsonify({"message": "Invalid input data"}), 400
+
+
+    with conn.cursor() as cur:
+        cur.execute("DELETE FROM IOT WHERE deviceId = %s", (device_id,))
+        conn.commit()
+        return make_response("Device deleted successfully",200)
+
+
+
 
 if __name__ == '__main__':
     cur = conn.cursor()
